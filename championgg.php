@@ -56,19 +56,19 @@ class ChampionGG {
 		
 		$firstMGBlock = array(
 			"items" => $firstMGItems,
-			"type" => "Most Frequent Starters (" . $firstMG["winPercent"] . "% win - " . $firstMG["games"] . " games)"
+			"type" => "Most Frequent Starters (" . number_format($firstMG["winPercent"], 5)*100 . "% win - " . $firstMG["games"] . " games)"
 		);
 		$firstHWPBlock = array(
 			"items" => $firstHWPItems,
-			"type" => "Highest Win Rate Starters (" . $firstHWP["winPercent"] . "% win - " . $firstHWP["games"] . " games)"
+			"type" => "Highest Win Rate Starters (" . number_format($firstHWP["winPercent"], 5)*100 . "% win - " . $firstHWP["games"] . " games)"
 		);
 		$fullMGBlock = array(
 			"items" => $fullMGItems,
-			"type" => "Most Frequent Build (" . $fullMG["winPercent"] . "% win - " . $fullMG["games"] . " games)"
+			"type" => "Most Frequent Build (" . number_format($fullMG["winPercent"], 5)*100 . "% win - " . $fullMG["games"] . " games)"
 		);
 		$fullHWPBlock = array(
 			"items" => $fullHWPItems,
-			"type" => "Highest Win Rate Build (" . $fullHWP["winPercent"] . "% win - " . $fullHWP["games"] . " games)"
+			"type" => "Highest Win Rate Build (" . number_format($fullHWP["winPercent"], 5)*100 . "% win - " . $fullHWP["games"] . " games)"
 		);
 		$consumeBlock = array(
 			"items" => $this->getItems($consumeItems, true),
@@ -80,20 +80,21 @@ class ChampionGG {
 		
 		$skillsMGBlock = array(
 			"items" => $this->getItems($skillsItems, true),
-			"type" => $skillsMGOrder . " (" . $skillsMG["winPercent"] . "% win - " . $skillsMG["games"] . " games)"
+			"type" => $skillsMGOrder . " (" . number_format($skillsMG["winPercent"], 5)*100 . "% win - " . $skillsMG["games"] . " games)"
 		);
 		$skillsHWPBlock = array(
 			"items" => $this->getItems($skillsItems, true),
-			"type" => $skillsHWPOrder . " (" . $skillsHWP["winPercent"] . "% win - " . $skillsHWP["games"] . " games)"
+			"type" => $skillsHWPOrder . " (" . number_format($skillsHWP["winPercent"], 5)*100 . "% win - " . $skillsHWP["games"] . " games)"
 		);
 
-		$roleFormatted = substr($champJSON["role"], 0, 1) . substr(strtolower($champJSON["role"]), 1);
-		if ($roleFormatted == "Duo_carry") {
-			$roleFormatted = "ADC";
-		}
-		else if ($roleFormatted == "Duo_support") {
-			$roleFormatted = "Support";
-		}
+                //Champion.gg now has standard role names
+//		$roleFormatted = substr($champJSON["role"], 0, 1) . substr(strtolower($champJSON["role"]), 1);
+//		if ($roleFormatted == "Duo_carry") {
+//			$roleFormatted = "ADC";
+//		}
+//		else if ($roleFormatted == "Duo_support") {
+//			$roleFormatted = "Support";
+//		}
 		
 		$itemSetArr = array(
 			"map" => "any",
@@ -108,7 +109,7 @@ class ChampionGG {
 				$skillsHWPBlock
 			),
 			"associatedChampions" => array(),
-			"title" => $roleFormatted . " " . $currentPatch,
+			"title" => $role . " " . $currentPatch,
 			"priority" => false,
 			"mode" => "any",
 			"isGlobalForMaps" => true,
@@ -142,7 +143,7 @@ class ChampionGG {
 		if (!file_exists($saveFolder)) {
 			mkdir($saveFolder, 0777, true);
 		}
-		$fileName = str_replace(".", "_", $currentPatch) . "_" . $roleFormatted . ".json";
+		$fileName = str_replace(".", "_", $currentPatch) . "_" . $role . ".json";
 		$fileName = $saveFolder . "/" . $fileName;
 		$itemSetJSON = json_encode($itemSetArr, JSON_PRETTY_PRINT);
 		file_put_contents($fileName, $itemSetJSON);
@@ -227,6 +228,6 @@ class ChampionGG {
 }
 
 $champ = new ChampionGG();
-//$champ->getOneSet("Bard", "Support");
-$champ->getAllSets();
+$champ->getOneSet("Bard", "Support");
+//$champ->getAllSets();
 ?>
