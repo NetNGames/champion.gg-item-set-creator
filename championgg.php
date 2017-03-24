@@ -38,17 +38,26 @@ class ChampionGG {
 		$skillsMG = $champJSON["skills"]["mostGames"];
 		$skillsHWP = $champJSON["skills"]["highestWinPercent"];
 
-		if (!isset($firstMG["games"], $firstHWP["games"], $fullMG["games"], $fullHWP["games"])) {
-			echo "Woops, full data is unavailable for " . $champ . " in " . $role . " role\n";
-			file_put_contents($time . "_Unavailable.txt", "* " . $champ . " - " . $role . " role\n", FILE_APPEND);
-			return false;
-		}		
+                //Adds unavailable champes to text file
+//		if (!isset($firstMG["games"], $firstHWP["games"], $fullMG["games"], $fullHWP["games"])) {
+//			echo "Woops, full data is unavailable for " . $champ . " in " . $role . " role\n";
+//			file_put_contents($time . "_Unavailable.txt", "* " . $champ . " - " . $role . " role\n", FILE_APPEND);
+//			return false;
+//		}		
 
-		$consumeItems = array(2003, 2031, 2033, 2032, 2055, 2138, 2139, 2140);
-		$trinketItems = array(3340, 3341, 3342);
+		$consumeItems = array(2003, 2031, 2043, 2047, 2032, 2033, 2140, 2139, 2138
+                                    , 2055 //Control Ward
+                                    );
+		$trinketItems = array(3340 //Yellow
+                                    , 3341 //Blue
+                                    , 3364 //Red
+                                    , 3363 //Red Upg
+                                    , 2055 //Control Ward
+                                    ); 
 		
-		$skillsItems = array(3364, 3363, 2003);
+//		$skillsItems = array(3364, 3363, 2003);
 
+                //Adds trinkets to end of builds
 		$firstMGItems = array_merge($this->getItems($firstMG), $this->getItems($trinketItems, true));
 		$firstHWPItems = array_merge($this->getItems($firstHWP), $this->getItems($trinketItems, true));
 		$fullMGItems = $this->getItems($fullMG);
@@ -64,28 +73,29 @@ class ChampionGG {
 		);
 		$fullMGBlock = array(
 			"items" => $fullMGItems,
-			"type" => "Most Frequent Build (" . number_format($fullMG["winPercent"], 5)*100 . "% win - " . $fullMG["games"] . " games)"
+			"type" => "Most Frequent: " . number_format($fullMG["winPercent"], 5)*100 . "% of " . $fullMG["games"] . " (" . $this->getSkills($skillsMG) . ")"
 		);
 		$fullHWPBlock = array(
 			"items" => $fullHWPItems,
-			"type" => "Highest Win Rate Build (" . number_format($fullHWP["winPercent"], 5)*100 . "% win - " . $fullHWP["games"] . " games)"
+			"type" => "Highest Win: " . number_format($fullHWP["winPercent"], 5)*100 . "% of " . $fullHWP["games"] . " (" . $this->getSkills($skillsHWP) . ")"
 		);
 		$consumeBlock = array(
 			"items" => $this->getItems($consumeItems, true),
 			"type" => "Consumables"
 		);			
 		
-		$skillsMGOrder = $this->getSkills($skillsMG);
-		$skillsHWPOrder = $this->getSkills($skillsHWP);
-		
-		$skillsMGBlock = array(
-			"items" => $this->getItems($skillsItems, true),
-			"type" => $skillsMGOrder . " (" . number_format($skillsMG["winPercent"], 5)*100 . "% win - " . $skillsMG["games"] . " games)"
-		);
-		$skillsHWPBlock = array(
-			"items" => $this->getItems($skillsItems, true),
-			"type" => $skillsHWPOrder . " (" . number_format($skillsHWP["winPercent"], 5)*100 . "% win - " . $skillsHWP["games"] . " games)"
-		);
+                //Addes skill orders to separate, blank catagories
+//		$skillsMGOrder = $this->getSkills($skillsMG);
+//		$skillsHWPOrder = $this->getSkills($skillsHWP);
+//		
+//		$skillsMGBlock = array(
+//			"items" => $this->getItems($skillsItems, true),
+//			"type" => $skillsMGOrder . " (" . number_format($skillsMG["winPercent"], 5)*100 . "% win - " . $skillsMG["games"] . " games)"
+//		);
+//		$skillsHWPBlock = array(
+//			"items" => $this->getItems($skillsItems, true),
+//			"type" => $skillsHWPOrder . " (" . number_format($skillsHWP["winPercent"], 5)*100 . "% win - " . $skillsHWP["games"] . " games)"
+//		);
 
                 //Champion.gg now has standard role names
 //		$roleFormatted = substr($champJSON["role"], 0, 1) . substr(strtolower($champJSON["role"]), 1);
@@ -105,8 +115,8 @@ class ChampionGG {
 				$fullMGBlock,
 				$fullHWPBlock,
 				$consumeBlock,
-				$skillsMGBlock,
-				$skillsHWPBlock
+//				$skillsMGBlock, //Too much clutter
+//				$skillsHWPBlock
 			),
 			"associatedChampions" => array(),
 			"title" => $role . " " . $currentPatch,
@@ -119,14 +129,16 @@ class ChampionGG {
 			"champion" => $champJSON["key"]
 		);
 		
-		if ($skillsMGOrder == $skillsHWPOrder) {
-			array_pop($itemSetArr["blocks"]);
-		}
-
+//		if ($skillsMGOrder == $skillsHWPOrder) {
+//			array_pop($itemSetArr["blocks"]);
+//		}
+                
+                //If starting items are the same, remove 1 set
 		if ($firstMGItems == $firstHWPItems) {
 			unset($itemSetArr["blocks"][1]);
 		}
-		
+                
+		//If builds are the same, remove 1 set
 		if ($fullMGItems == $fullHWPItems) {
 			unset($itemSetArr["blocks"][3]);
 		}
@@ -228,6 +240,6 @@ class ChampionGG {
 }
 
 $champ = new ChampionGG();
-$champ->getOneSet("Bard", "Support");
-//$champ->getAllSets();
+//$champ->getOneSet("Bard", "Support");
+$champ->getAllSets();
 ?>
