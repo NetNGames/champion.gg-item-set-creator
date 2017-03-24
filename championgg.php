@@ -55,6 +55,7 @@ class ChampionGG {
                                     , 2055 //Control Ward
                                     ); 
 		
+                //Adds blank item slot to put skill order
 //		$skillsItems = array(3364, 3363, 2003);
 
                 //Adds trinkets to end of builds
