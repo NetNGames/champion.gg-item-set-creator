@@ -3,9 +3,10 @@ class ChampionGG {
 	public function getAllSets() {
 		echo "Creating item sets for all champions...\n";
 		$time = time();
-		$saveFolder = $time . "_ItemSets";
 		$page = $this->getPage("http://champion.gg/");
-		preg_match_all('/<a href="([^"]*)" style="display:block">/si', $page, $list);
+                $patch = $this->getBetween(str_replace(array("\n", " "), "", $page), "<small>Patch<strong>", "</strong>"); //Grabs patch number
+		$saveFolder = $patch . "_ItemSets"; //saves itemsets to folder with patch number
+		preg_match_all('/<a href="([^"]*)" style="display:block">/si', $page, $list); //Grabs champion names and roles
 		foreach ($list[1] as $champPage) {
 			$data = explode("/", $champPage);
 			$champ = $data[2];
